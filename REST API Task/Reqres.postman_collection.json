@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "c1b11dc3-b2b2-4e5a-9e99-4637c5ae3f72",
+		"name": "Reqres",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37888416"
+	},
+	"item": [
+		{
+			"name": "Get",
+			"item": [
+				{
+					"name": "List available users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.json();",
+									"",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Page property should be equal 1\", function () {",
+									"    pm.expect(responseBody.page, \"Page property\").to.eql(1);",
+									"    pm.expect(responseBody.page, \"Page property\").to.be.a('number');",
+									"});",
+									"",
+									"pm.test(\"Check id and email of the third user\", function () {",
+									"    pm.expect(responseBody.data[2].id, \"ID proeprty\").to.eql(3);",
+									"    pm.expect(responseBody.data[2].email, \"Email proeprty\").to.eql('emma.wong@reqres.in');",
+									"    console.log(\"Single user id\", responseBody.data[2].id);",
+									"    console.log(\"Single user email\", responseBody.data[2].email);",
+									"});",
+									"",
+									"var users = responseBody.data;",
+									"var sortedUsers = users.sort((a, b) => a.first_name.localeCompare(b.first_name));",
+									"console.log(\"Sorted Users by First Name:\");",
+									"sortedUsers.forEach(user => console.log(`${user.first_name} ${user.last_name}`));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users?page=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get extracted user details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Get extracted user details\", function () {",
+									"    pm.expect(responseBody.data.id, \"ID proeprty\").to.eql(3);",
+									"    pm.expect(responseBody.data.email, \"Email proeprty\").to.eql('emma.wong@reqres.in');",
+									"    pm.expect(responseBody.data.first_name, \"First name proeprty\").to.eql('Emma');",
+									"    pm.expect(responseBody.data.last_name, \"Last name proeprty\").to.eql('Wong');",
+									"    pm.expect(responseBody.data.avatar, \"Avatar proeprty\").to.eql('https://reqres.in/img/faces/3-image.jpg');",
+									"    console.log(\"User details\", responseBody.data);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user that doesn't exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"13"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Create UNIQUE new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Verify all properties\", function () {",
+									"    pm.expect(responseBody.name, \"Name property\").to.exist;",
+									"    pm.expect(responseBody.job, \"Job property\").to.exist;",
+									"    pm.expect(responseBody.id, \"ID property\").to.exist;",
+									"    pm.expect(responseBody.createdAt, \"CreatedAt property\").to.exist;",
+									"    //get user id for user deletion",
+									"    pm.collectionVariables.set(\"user_id\", responseBody.id);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomUserName}}{{$timestamp}}\",\n    \"job\": \"{{$randomJobTitle}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete",
+			"item": [
+				{
+					"name": "Delete newly created user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
